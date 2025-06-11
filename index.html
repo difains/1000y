@@ -21,7 +21,7 @@
         }
 
         .calculator-container {
-            max-width: 700px;
+            max-width: 900px;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -272,6 +272,89 @@
             font-style: italic;
         }
 
+        /* 몹 계산기 전용 스타일 */
+        .mob-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .mob-card {
+            background: white;
+            border-radius: 10px;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .mob-card:hover {
+            border-color: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
+        }
+
+        .mob-name {
+            font-weight: 700;
+            font-size: 16px;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .mob-stats {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+
+        .mob-result {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #f3f4f6;
+            border-radius: 6px;
+        }
+
+        .mob-hits {
+            font-weight: 600;
+            color: #dc2626;
+        }
+
+        .mob-efficiency {
+            font-weight: 600;
+            color: #059669;
+        }
+
+        .efficiency-high { color: #059669 !important; }
+        .efficiency-medium { color: #d97706 !important; }
+        .efficiency-low { color: #dc2626 !important; }
+
+        .filter-section {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
+        }
+
         @media (max-width: 768px) {
             .calculator-container {
                 margin: 10px;
@@ -298,6 +381,10 @@
             .input-row label {
                 font-size: 13px;
             }
+
+            .mob-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -310,7 +397,7 @@
         
         <div class="tabs">
             <button class="tab-button active" data-tab="tab1">1+1 시세 계산기</button>
-            <button class="tab-button" data-tab="tab2">계산기 2</button>
+            <button class="tab-button" data-tab="tab2">장성이남 몹 계산기</button>
             <button class="tab-button" data-tab="tab3">계산기 3</button>
         </div>
         
@@ -371,9 +458,34 @@
         </div>
         
         <div class="tab-content" id="tab2">
-            <div class="empty-tab">
-                <h3>🚧 준비 중</h3>
-                <p>계산기 2는 곧 출시될 예정입니다.</p>
+            <div class="input-section">
+                <h3 class="section-title">공격력 설정</h3>
+                <div class="input-grid">
+                    <div class="input-row">
+                        <label for="playerAttack">내 공격력</label>
+                        <input type="number" id="playerAttack" value="2800" min="1" step="1" placeholder="예: 2800" />
+                    </div>
+                    <div class="input-row">
+                        <label></label>
+                        <button class="calculate-btn" id="mobCalculateBtn">몹 타격 계산</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-section">
+                <h2>🗡️ 장성이남 몹 타격 계산 결과</h2>
+                <div class="filter-section">
+                    <span style="font-weight: 600; color: #374151;">효율 필터:</span>
+                    <button class="filter-btn active" data-filter="all">전체</button>
+                    <button class="filter-btn" data-filter="high">고효율 (5.0+)</button>
+                    <button class="filter-btn" data-filter="medium">중효율 (3.0-4.9)</button>
+                    <button class="filter-btn" data-filter="low">저효율 (3.0 미만)</button>
+                </div>
+                <div id="mobResultContainer">
+                    <div class="result-item">
+                        공격력을 입력하고 계산하기 버튼을 눌러주세요.
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -404,6 +516,7 @@
             });
         });
 
+        // 1+1 계산기 로직
         const calculateBtn = document.getElementById('calculateBtn');
         const priceInput = document.getElementById('price');
         const goldCountInput = document.getElementById('goldCount');
@@ -432,14 +545,11 @@
                 return;
             }
 
-            // 1+1 적용 (기본 제공 * 2)
             const goldTotal = goldBase * 2;
             const iceTotal = iceBase * 2;
-
             const iceWonboRate = iceRate * goldRate;
             const goldWonbo = goldTotal * goldRate;
             const iceWonbo = iceTotal * iceWonboRate;
-
             const difference = Math.abs(goldWonbo - iceWonbo);
             const betterPackage = goldWonbo > iceWonbo ? '금화' : '빙옥';
 
@@ -461,15 +571,150 @@
         }
 
         calculateBtn.addEventListener('click', calculate);
-
-        // 입력값 변경 시 자동 재계산
         [priceInput, goldCountInput, iceCountInput, goldRateInput, iceRateInput].forEach(element => {
             element.addEventListener('change', calculate);
             element.addEventListener('input', calculate);
         });
-
-        // 초기 계산 실행
         calculate();
+
+        // 몹 계산기 로직
+        const mobData = [
+            {name: '사슴', hp: 1500, attack: 0, defense: 0, resistance: null, drop: '고기1', silver: 4, efficiency: 4},
+            {name: '개', hp: 1200, attack: 300, defense: 300, resistance: null, drop: '고기1 (50%)', silver: 2, efficiency: 2},
+            {name: '돼지', hp: 1200, attack: 300, defense: 300, resistance: null, drop: '고기1 (50%)', silver: 2, efficiency: 2},
+            {name: '말', hp: 1500, attack: 300, defense: 300, resistance: null, drop: '고기2 가죽1 (50%)', silver: 7.5, efficiency: 7.5},
+            {name: '소', hp: 1500, attack: 300, defense: 300, resistance: null, drop: '고기2 가죽1 (50%)', silver: 7.5, efficiency: 7.5},
+            {name: '적풍', hp: 12000, attack: 900, defense: 400, resistance: null, drop: '은화20 화살5', silver: 30, efficiency: 6},
+            {name: '흑닌자', hp: 12000, attack: 900, defense: 400, resistance: null, drop: '은화20 비도5', silver: 30, efficiency: 6},
+            {name: '호랑이', hp: 20000, attack: 800, defense: 500, resistance: null, drop: '고기3 가죽2', silver: 26, efficiency: 2.89},
+            {name: '새끼호랑이', hp: 20000, attack: 800, defense: 500, resistance: null, drop: '고기3 가죽2', silver: 26, efficiency: 2.89},
+            {name: '곰', hp: 13000, attack: 1000, defense: 300, resistance: null, drop: '고기2 가죽2', silver: 22, efficiency: 3.67},
+            {name: '무소', hp: 22000, attack: 950, defense: 450, resistance: null, drop: '고기덩어리3', silver: 36, efficiency: 3.6},
+            {name: '흑소', hp: 15000, attack: 1200, defense: 300, resistance: null, drop: '고기덩어리3', silver: 36, efficiency: 6},
+            {name: '광견', hp: 13000, attack: 600, defense: 300, resistance: null, drop: '고기2 가죽2', silver: 22, efficiency: 3.67},
+            {name: '파계승', hp: 14000, attack: 1055, defense: 300, resistance: 0.15, drop: '은화40', silver: 40, efficiency: 6.67},
+            {name: '북방마인', hp: 35000, attack: 1500, defense: 900, resistance: 0.15, drop: '생약5', silver: null, efficiency: null},
+            {name: '전갈', hp: 18000, attack: 1100, defense: 600, resistance: null, drop: '은화50', silver: 50, efficiency: 5.56},
+            {name: '늑대', hp: 25000, attack: 1300, defense: 600, resistance: null, drop: '고기덩어리3', silver: 36, efficiency: 3},
+            {name: '강시', hp: 30000, attack: 1100, defense: 600, resistance: null, drop: '은화50', silver: 50, efficiency: 3.57},
+            {name: '망나니', hp: 30000, attack: 1350, defense: 450, resistance: null, drop: '은화50', silver: 50, efficiency: 3.85},
+            {name: '산적', hp: 30000, attack: 1450, defense: 500, resistance: null, drop: '생약3', silver: null, efficiency: null},
+            {name: '백호', hp: 48000, attack: 1150, defense: 750, resistance: null, drop: '고기덩어리10', silver: 120, efficiency: 5},
+            {name: '흙거인', hp: 35000, attack: 1100, defense: 700, resistance: null, drop: '은화100', silver: 100, efficiency: 5.88},
+            {name: '석거인', hp: 35000, attack: 1450, defense: 750, resistance: null, drop: '은화100', silver: 100, efficiency: 5.56},
+            {name: '사룡조', hp: 25000, attack: 1500, defense: 800, resistance: 0.1, drop: '복수초2 불화살2', silver: null, efficiency: null}
+        ];
+
+        const mobCalculateBtn = document.getElementById('mobCalculateBtn');
+        const playerAttackInput = document.getElementById('playerAttack');
+        const mobResultContainer = document.getElementById('mobResultContainer');
+
+        function calculateMobHits() {
+            const playerAttack = Number(playerAttackInput.value);
+            
+            if (playerAttack <= 0) {
+                mobResultContainer.innerHTML = `
+                    <div class="result-item" style="color: #dc2626;">
+                        ⚠️ 공격력은 0보다 큰 값을 입력해주세요.
+                    </div>
+                `;
+                return;
+            }
+
+            let resultsHTML = '<div class="mob-grid">';
+            
+            mobData.forEach(mob => {
+                let damage = playerAttack - mob.defense;
+                
+                // 내성 적용
+                if (mob.resistance !== null) {
+                    damage = damage * (1 - mob.resistance);
+                }
+                
+                // 최소 데미지 1
+                damage = Math.max(1, Math.floor(damage));
+                
+                const hitsNeeded = Math.ceil(mob.hp / damage);
+                
+                let efficiencyClass = '';
+                let efficiencyText = '';
+                
+                if (mob.efficiency !== null) {
+                    if (mob.efficiency >= 5.0) {
+                        efficiencyClass = 'efficiency-high';
+                        efficiencyText = `효율: ${mob.efficiency.toFixed(2)}`;
+                    } else if (mob.efficiency >= 3.0) {
+                        efficiencyClass = 'efficiency-medium';
+                        efficiencyText = `효율: ${mob.efficiency.toFixed(2)}`;
+                    } else {
+                        efficiencyClass = 'efficiency-low';
+                        efficiencyText = `효율: ${mob.efficiency.toFixed(2)}`;
+                    }
+                } else {
+                    efficiencyText = '효율: -';
+                }
+
+                resultsHTML += `
+                    <div class="mob-card" data-efficiency="${mob.efficiency || 0}">
+                        <div class="mob-name">${mob.name}</div>
+                        <div class="mob-stats">
+                            체력: ${formatNumber(mob.hp)} | 공격: ${mob.attack} | 방어: ${mob.defense}
+                            ${mob.resistance ? ` | 내성: ${(mob.resistance * 100).toFixed(0)}%` : ''}
+                        </div>
+                        <div class="mob-stats">드랍: ${mob.drop}</div>
+                        <div class="mob-result">
+                            <span class="mob-hits">${hitsNeeded}타</span>
+                            <span class="mob-efficiency ${efficiencyClass}">${efficiencyText}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            resultsHTML += '</div>';
+            mobResultContainer.innerHTML = resultsHTML;
+        }
+
+        // 필터 기능
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const filter = btn.dataset.filter;
+                const mobCards = document.querySelectorAll('.mob-card');
+                
+                mobCards.forEach(card => {
+                    const efficiency = parseFloat(card.dataset.efficiency);
+                    let show = true;
+                    
+                    switch(filter) {
+                        case 'high':
+                            show = efficiency >= 5.0;
+                            break;
+                        case 'medium':
+                            show = efficiency >= 3.0 && efficiency < 5.0;
+                            break;
+                        case 'low':
+                            show = efficiency > 0 && efficiency < 3.0;
+                            break;
+                        case 'all':
+                        default:
+                            show = true;
+                            break;
+                    }
+                    
+                    card.style.display = show ? 'block' : 'none';
+                });
+            });
+        });
+
+        mobCalculateBtn.addEventListener('click', calculateMobHits);
+        playerAttackInput.addEventListener('input', calculateMobHits);
+        
+        // 초기 몹 계산 실행
+        calculateMobHits();
     </script>
 </body>
 </html>
