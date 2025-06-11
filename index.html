@@ -338,6 +338,8 @@
                         <select id="price">
                             <option value="7500">7,500원</option>
                             <option value="17000">17,000원</option>
+                            <option value="24500">24,500원</option>
+                            <option value="49000">49,000원</option>
                         </select>
                     </div>
                     <div class="input-row">
@@ -399,10 +401,12 @@
         const iceRateInput = document.getElementById('iceRate');
         const resultContainer = document.getElementById('resultContainer');
 
-        // 패키지 구성 정보
+        // 업데이트된 패키지 구성 정보
         const packages = {
-            7500: { gold: 20, ice: 2 },   // 10+10, 1+1
-            17000: { gold: 60, ice: 6 }   // 30+30, 3+3
+            7500: { gold: 20, ice: 2 },     // 10+10 금화, 1+1 빙옥
+            17000: { gold: 60, ice: 6 },    // 30+30 금화, 3+3 빙옥
+            24500: { gold: 80, ice: 10 },   // 40+40 금화, 5+5 빙옥
+            49000: { gold: 160, ice: 20 }   // 80+80 금화, 10+10 빙옥
         };
 
         function formatNumber(num) {
