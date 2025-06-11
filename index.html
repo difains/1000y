@@ -4,153 +4,302 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>천년어게인 계산기</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            background-color: #f5f7fa;
-            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             padding: 20px;
             color: #333;
         }
 
         .calculator-container {
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto;
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            padding: 20px 30px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
 
-        h1 {
-            font-weight: 700;
-            font-size: 28px;
-            margin-bottom: 20px;
-            color: #2c3e50;
+        .header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 30px;
             text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
         }
 
         .tabs {
             display: flex;
-            border-bottom: 2px solid #e1e4e8;
-            margin-bottom: 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
         }
 
         .tab-button {
             flex: 1;
-            padding: 12px 0;
+            padding: 16px 20px;
             background: none;
             border: none;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
-            color: #7f8c8d;
+            color: #64748b;
             cursor: pointer;
-            transition: color 0.3s ease;
-            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
         .tab-button.active {
-            color: #2980b9;
-            border-bottom: 3px solid #2980b9;
+            color: #4f46e5;
+            background: white;
         }
 
-        .tab-button:hover {
-            color: #34495e;
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
         }
 
-        .input-section {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .input-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            gap: 15px;
-        }
-
-        .input-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .input-section label {
-            flex: 0 0 140px;
-            font-weight: 600;
-            color: #34495e;
-        }
-
-        .input-section select,
-        .input-section input {
-            flex: 1;
-            padding: 10px 12px;
-            border: 1px solid #bdc3c7;
-            border-radius: 6px;
-            font-size: 14px;
-            color: #2c3e50;
-            background-color: white;
-        }
-
-        #calculateBtn {
-            background-color: #2980b9;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 12px 24px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            font-size: 16px;
-        }
-
-        #calculateBtn:hover {
-            background-color: #1c5980;
-        }
-
-        .result-section {
-            background-color: #f1f8ff;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid #2980b9;
-        }
-
-        .result-section h2 {
-            font-weight: 700;
-            font-size: 22px;
-            color: #2c3e50;
-            margin-bottom: 10px;
-            margin-top: 0;
-        }
-
-        .result-section p {
-            font-size: 18px;
-            color: #27ae60;
-            font-weight: 600;
-            margin: 0;
+        .tab-button:hover:not(.active) {
+            color: #475569;
+            background: #f1f5f9;
         }
 
         .tab-content {
             display: none;
+            padding: 30px;
         }
 
         .tab-content.active {
             display: block;
         }
 
+        .input-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-weight: 700;
+            font-size: 18px;
+            color: #1e293b;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 2px;
+        }
+
+        .input-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .input-row label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .input-row input,
+        .input-row select {
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #1f2937;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .input-row input:focus,
+        .input-row select:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .calculate-btn {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px 32px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            margin-top: 8px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+
+        .result-section {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 1px solid #0ea5e9;
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .result-section h2 {
+            font-weight: 700;
+            font-size: 20px;
+            color: #0c4a6e;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .result-section h2::before {
+            content: '💎';
+            font-size: 24px;
+        }
+
+        .result-item {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid #0ea5e9;
+            font-size: 16px;
+            color: #0c4a6e;
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-highlight {
+            font-weight: 700;
+            color: #059669;
+            font-size: 18px;
+        }
+
+        .comparison-result {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid #f59e0b;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .comparison-result h3 {
+            color: #92400e;
+            font-size: 18px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .comparison-result p {
+            color: #92400e;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
         .empty-tab {
             text-align: center;
-            padding: 40px 20px;
-            color: #7f8c8d;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+
+        .empty-tab h3 {
+            font-size: 24px;
+            margin-bottom: 12px;
+            color: #475569;
+        }
+
+        .empty-tab p {
             font-size: 16px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .calculator-container {
+                margin: 10px;
+                border-radius: 16px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .tab-content {
+                padding: 20px;
+            }
+            
+            .input-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .input-row label {
+                font-size: 13px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="calculator-container">
-        <h1>천년어게인 계산기</h1>
+        <div class="header">
+            <h1>천년어게인 계산기</h1>
+            <p>게임 내 화폐 효율을 계산해보세요</p>
+        </div>
         
         <div class="tabs">
             <button class="tab-button active" data-tab="tab1">1+1 시세 계산기</button>
@@ -160,38 +309,65 @@
         
         <div class="tab-content active" id="tab1">
             <div class="input-section">
-                <div class="input-row">
-                    <label for="packageType">패키지 종류:</label>
-                    <select id="packageType">
-                        <option value="gold">금화 패키지</option>
-                        <option value="ice">빙옥 패키지</option>
-                    </select>
+                <h3 class="section-title">시세 설정</h3>
+                <div class="input-grid">
+                    <div class="input-row">
+                        <label for="goldRate">금화 시세 (원보)</label>
+                        <input type="number" id="goldRate" value="14" min="0.1" step="0.1" placeholder="예: 14" />
+                    </div>
+                    <div class="input-row">
+                        <label for="iceRate">빙옥 시세 (금화)</label>
+                        <input type="number" id="iceRate" value="19" min="0.1" step="0.1" placeholder="예: 19" />
+                    </div>
                 </div>
-                <div class="input-row">
-                    <label for="price">가격 (원):</label>
-                    <input type="number" id="price" value="7500" min="0" step="100" />
-                </div>
-                <div class="input-row">
-                    <label></label>
-                    <button id="calculateBtn">계산하기</button>
+            </div>
+
+            <div class="input-section">
+                <h3 class="section-title">패키지 계산</h3>
+                <div class="input-grid">
+                    <div class="input-row">
+                        <label for="packageType">패키지 종류</label>
+                        <select id="packageType">
+                            <option value="both">두 패키지 비교</option>
+                            <option value="gold">금화 패키지만</option>
+                            <option value="ice">빙옥 패키지만</option>
+                        </select>
+                    </div>
+                    <div class="input-row">
+                        <label for="price">가격 (원)</label>
+                        <select id="price">
+                            <option value="7500">7,500원</option>
+                            <option value="17000">17,000원</option>
+                        </select>
+                    </div>
+                    <div class="input-row">
+                        <label></label>
+                        <button class="calculate-btn" id="calculateBtn">계산하기</button>
+                    </div>
                 </div>
             </div>
             
             <div class="result-section">
                 <h2>계산 결과</h2>
-                <p id="resultText">패키지를 선택하고 계산하기 버튼을 눌러주세요.</p>
+                <div id="resultContainer">
+                    <div class="result-item">
+                        시세를 설정하고 패키지를 선택한 후 계산하기 버튼을 눌러주세요.
+                    </div>
+                </div>
             </div>
         </div>
         
         <div class="tab-content" id="tab2">
             <div class="empty-tab">
-                <p>계산기 2는 준비 중입니다.</p>
+                <h3>🚧 준비 중</h3>
+                <p>계산기 2는 곧 출시될 예정입니다.</p>
             </div>
         </div>
         
         <div class="tab-content" id="tab3">
             <div class="empty-tab">
-                <p>계산기 3은 준비 중입니다.</p>
+                <h3>🚧 준비 중</h3>
+                <p>계산기 3은 곧 출시될 예정입니다.</p>
             </div>
         </div>
     </div>
@@ -202,12 +378,8 @@
         const tabContents = document.querySelectorAll('.tab-content');
 
         function activateTab(tabId) {
-            tabContents.forEach(tc => {
-                tc.classList.remove('active');
-            });
-            tabButtons.forEach(tb => {
-                tb.classList.remove('active');
-            });
+            tabContents.forEach(tc => tc.classList.remove('active'));
+            tabButtons.forEach(tb => tb.classList.remove('active'));
             
             document.getElementById(tabId).classList.add('active');
             document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
@@ -222,52 +394,93 @@
         // 계산 로직
         const calculateBtn = document.getElementById('calculateBtn');
         const packageTypeSelect = document.getElementById('packageType');
-        const priceInput = document.getElementById('price');
-        const resultText = document.getElementById('resultText');
+        const priceSelect = document.getElementById('price');
+        const goldRateInput = document.getElementById('goldRate');
+        const iceRateInput = document.getElementById('iceRate');
+        const resultContainer = document.getElementById('resultContainer');
 
-        // 환율 및 패키지 정보
-        const wonPerGold = 14;
-        const goldPerIce = 19;
-
-        // 1+1 패키지 구성
+        // 패키지 구성 정보
         const packages = {
-            7500: {
-                gold: 20, // 10+10
-                ice: 2,   // 1+1
-            },
-            17000: {
-                gold: 60, // 30+30
-                ice: 6,   // 3+3
-            }
+            7500: { gold: 20, ice: 2 },   // 10+10, 1+1
+            17000: { gold: 60, ice: 6 }   // 30+30, 3+3
         };
 
-        calculateBtn.addEventListener('click', () => {
-            const price = Number(priceInput.value);
-            const packageType = packageTypeSelect.value;
+        function formatNumber(num) {
+            return new Intl.NumberFormat('ko-KR').format(num);
+        }
 
-            if (!packages[price]) {
-                resultText.textContent = '지원하지 않는 가격입니다. 7500원 또는 17000원만 입력하세요.';
-                resultText.style.color = '#e74c3c';
+        function calculate() {
+            const price = Number(priceSelect.value);
+            const packageType = packageTypeSelect.value;
+            const goldRate = Number(goldRateInput.value);
+            const iceRate = Number(iceRateInput.value);
+
+            if (goldRate <= 0 || iceRate <= 0) {
+                resultContainer.innerHTML = `
+                    <div class="result-item" style="color: #dc2626;">
+                        ⚠️ 시세는 0보다 큰 값을 입력해주세요.
+                    </div>
+                `;
                 return;
             }
 
-            let resultWonbo = 0;
-            let itemCount = 0;
-            let itemName = '';
+            const iceWonboRate = iceRate * goldRate;
+            const goldCount = packages[price].gold;
+            const iceCount = packages[price].ice;
+            const goldWonbo = goldCount * goldRate;
+            const iceWonbo = iceCount * iceWonboRate;
+
+            let resultHTML = '';
 
             if (packageType === 'gold') {
-                itemCount = packages[price].gold;
-                itemName = '금화';
-                resultWonbo = itemCount * wonPerGold;
+                resultHTML = `
+                    <div class="result-item">
+                        <div class="result-highlight">${formatNumber(price)}원 금화 패키지</div>
+                        <div>금화 ${goldCount}개 = <strong>${formatNumber(goldWonbo)}원보</strong></div>
+                    </div>
+                `;
             } else if (packageType === 'ice') {
-                itemCount = packages[price].ice;
-                itemName = '빙옥';
-                resultWonbo = itemCount * goldPerIce * wonPerGold;
+                resultHTML = `
+                    <div class="result-item">
+                        <div class="result-highlight">${formatNumber(price)}원 빙옥 패키지</div>
+                        <div>빙옥 ${iceCount}개 = <strong>${formatNumber(iceWonbo)}원보</strong></div>
+                    </div>
+                `;
+            } else {
+                const difference = Math.abs(goldWonbo - iceWonbo);
+                const betterPackage = goldWonbo > iceWonbo ? '금화' : '빙옥';
+                const betterValue = Math.max(goldWonbo, iceWonbo);
+                
+                resultHTML = `
+                    <div class="result-item">
+                        <div class="result-highlight">${formatNumber(price)}원 패키지 비교</div>
+                    </div>
+                    <div class="result-item">
+                        🪙 <strong>금화 패키지:</strong> ${goldCount}개 = ${formatNumber(goldWonbo)}원보
+                    </div>
+                    <div class="result-item">
+                        🧊 <strong>빙옥 패키지:</strong> ${iceCount}개 = ${formatNumber(iceWonbo)}원보
+                    </div>
+                    <div class="comparison-result">
+                        <h3>🏆 추천 패키지</h3>
+                        <p><strong>${betterPackage} 패키지</strong>가 <strong>${formatNumber(difference)}원보</strong> 더 이득!</p>
+                    </div>
+                `;
             }
 
-            resultText.style.color = '#27ae60';
-            resultText.textContent = `${price}원 ${itemName} 패키지 (${itemName} ${itemCount}개)의 원보 가치는 ${resultWonbo}원보입니다.`;
+            resultContainer.innerHTML = resultHTML;
+        }
+
+        calculateBtn.addEventListener('click', calculate);
+
+        // 입력값 변경 시 자동 재계산
+        [goldRateInput, iceRateInput, packageTypeSelect, priceSelect].forEach(element => {
+            element.addEventListener('change', calculate);
+            element.addEventListener('input', calculate);
         });
+
+        // 초기 계산 실행
+        calculate();
     </script>
 </body>
 </html>
